@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>역학 · 열역학 공식 정리</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      /* 기본 레이아웃 */
+      body {
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+        margin: 0;
+        padding: 0;
+        background: #f5f5f8;
+      }
+
+      /* 메인 카드 컨테이너 */
+      .container {
+        max-width: 1100px;
+        margin: 40px auto;
+        padding: 24px;
+        background: #ffffff;
+        border-radius: 18px;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+      }
+
+      /* 제목 / 부제목 */
+      h1 {
+        margin: 0 0 8px;
+        font-size: 28px;
+      }
+
+      .subtitle {
+        margin: 0 0 24px;
+        color: #666;
+        font-size: 14px;
+      }
+
+      /* 과목 탭 버튼 영역 */
+      .subject-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 16px;
+      }
+
+      .subject-tab {
+        border: 1px solid #d0d0e5;
+        background: #fafafa;
+        padding: 8px 16px;
+        border-radius: 999px;
+        font-size: 13px;
+        cursor: pointer;
+        transition: all 0.15s ease-in-out;
+      }
+
+      .subject-tab:hover {
+        background: #f0f0ff;
+      }
+
+      .subject-tab.active {
+        background: #3f51b5;
+        color: #ffffff;
+        border-color: #3f51b5;
+      }
+
+      /* 과목 정보 */
+      .subject-info {
+        margin-bottom: 16px;
+      }
+
+      .subject-info h2 {
+        margin: 0 0 4px;
+        font-size: 20px;
+      }
+
+      .subject-info p {
+        margin: 0;
+        color: #555;
+        font-size: 13px;
+      }
+
+      /* 공식 카드 리스트 그리드 */
+      .formula-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 16px;
+      }
+
+      /* 개별 공식 카드 */
+      .formula-card {
+        background: #fafafa;
+        border-radius: 14px;
+        padding: 14px 16px;
+        border: 1px solid #e1e1ec;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      /* 카드 상단 타이틀 라인 */
+      .formula-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 8px;
+      }
+
+      .formula-title {
+        font-weight: 700;
+        font-size: 14px;
+      }
+
+      .formula-tag {
+        font-size: 11px;
+        padding: 2px 8px;
+        border-radius: 999px;
+        border: 1px solid #c5c5d8;
+        color: #555;
+      }
+
+      /* 수식 영역 */
+      .formula-equation {
+        font-family: "JetBrains Mono", "Fira Code", Consolas, monospace;
+        font-size: 13px;
+        padding: 6px 8px;
+        border-radius: 8px;
+        background: #ffffff;
+        border: 1px dashed #d0d0e0;
+        word-break: break-word;
+      }
+
+      /* 설명 텍스트 */
+      .formula-desc {
+        font-size: 12px;
+        color: #555;
+        line-height: 1.5;
+      }
+
+      /* 키워드/메모 */
+      .formula-extra {
+        font-size: 11px;
+        color: #777;
+        margin-top: 2px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>역학·열역학 공식 정리</h1>
+      <p class="subtitle">
+        정역학 / 고체역학 / 열역학 / 유체역학의 핵심 공식들을 과목별로 정리한
+        페이지입니다.
+      </p>
+
+      <!-- 과목 선택 탭 -->
+      <div class="subject-tabs">
+        <button class="subject-tab active" data-subject="statics">정역학</button>
+        <button class="subject-tab" data-subject="solid">고체역학</button>
+        <button class="subject-tab" data-subject="thermo">열역학</button>
+        <button class="subject-tab" data-subject="fluid">유체역학</button>
+      </div>
+
+      <!-- 현재 선택된 과목 이름 / 설명 -->
+      <div class="subject-info">
+        <h2 id="subject-title">정역학 (Statics)</h2>
+        <p id="subject-desc">
+          정지한 물체 또는 등속도 운동을 하는 물체에 작용하는 힘의 평형을 다루는
+          과목입니다.
+        </p>
+      </div>
+
+      <!-- 공식 카드 리스트 -->
+      <div id="formula-list" class="formula-list"></div>
+    </div>
+
+    <script>
+      // 과목별 공식 데이터 정리
+      const subjects = {
+        statics: {
+          title: "정역학 (Statics)",
+          desc:
+            "정지 또는 등속도 운동을 하는 물체에 작용하는 힘·모멘트의 평형을 다룹니다.",
+          formulas: [
+            {
+              title: "입자 평형 조건",
+              tag: "기본 평형",
+              equation: "∑F = 0",
+              desc:
+                "한 입자에 작용하는 힘의 벡터 합이 0이면 가속도는 0, 즉 정지 또는 등속도 직선 운동을 합니다.",
+              extra: "입자, 힘의 합, 평형 상태"
+            },
+            {
+              title: "강체 평형 (2D)",
+              tag: "기본 평형",
+              equation: "∑Fx = 0,  ∑Fy = 0,  ∑M = 0",
+              desc:
+                "2차원에서 강체가 평형이 되려면 x방향 힘, y방향 힘, 모멘트의 합이 모두 0이어야 합니다.",
+              extra: "빔, 트러스, 프레임 해석에 사용"
+            },
+            {
+              title: "강체 평형 (3D)",
+              tag: "3D 평형",
+              equation:
+                "∑Fx = 0,  ∑Fy = 0,  ∑Fz = 0,  ∑Mx = 0,  ∑My = 0,  ∑Mz = 0",
+              desc:
+                "3차원에서 강체 평형을 위해서는 세 방향 힘과 세 방향 모멘트의 합이 모두 0이어야 합니다.",
+              extra: "공간 구조물, 기계 부품 해석"
+            },
+            {
+              title: "모멘트 정의",
+              tag: "모멘트",
+              equation: "M = F · d",
+              desc:
+                "모멘트는 회전 중심점에서 힘의 작용선까지의 수직거리 d와 힘 F의 곱으로 정의됩니다.",
+              extra: "회전, 레버암, 지레 원리"
+            },
+            {
+              title: "벡터 모멘트",
+              tag: "벡터",
+              equation: "→M₀ = →r × →F",
+              desc:
+                "위치벡터 r과 힘 F의 벡터 외적을 통해 모멘트의 크기와 방향을 구합니다.",
+              extra: "3D 모멘트, 방향 포함"
+            },
+            {
+              title: "쌍력 (Couple)",
+              tag: "모멘트",
+              equation: "M = F · d (쌍력은 위치와 무관)",
+              desc:
+                "크기가 같고 방향이 반대인 두 힘이 평행하게 작용할 때, 순수한 회전 모멘트만 남는 쌍력을 이룹니다.",
+              extra: "렌치, 볼트 조임 등"
+            },
+            {
+              title: "분포하중의 등가 집중하중",
+              tag: "분포하중",
+              equation: "R = ∫ w(x) dx,   x̄ = (∫ x w(x) dx) / (∫ w(x) dx)",
+              desc:
+                "선형 또는 일반 분포하중 w(x)를 하나의 등가 집중하중 R과 그 작용점 x̄로 치환합니다.",
+              extra: "빔의 전단력·모멘트 해석"
+            },
+            {
+              title: "면적 도심 (Centroid)",
+              tag: "도심",
+              equation: "x̄ = (∑ Aᵢ xᵢ) / (∑ Aᵢ),   ȳ = (∑ Aᵢ yᵢ) / (∑ Aᵢ)",
+              desc:
+                "복합 도형을 간단한 도형들로 나누어 각 도형 넓이와 도심 위치를 이용해 전체 도심을 구합니다.",
+              extra: "단면 설계, 중립축 위치"
+            },
+            {
+              title: "마찰력 (정지 마찰)",
+              tag: "마찰",
+              equation: "Fs,max = μs · N",
+              desc:
+                "물체가 아직 미끄러지지 않을 때의 최대 정지 마찰력은 마찰계수 μs와 수직항력 N의 곱입니다.",
+              extra: "미끄러지기 시작하는 조건"
+            },
+            {
+              title: "마찰력 (운동 마찰)",
+              tag: "마찰",
+              equation: "Fk = μk · N",
+              desc:
+                "물체가 이미 미끄러지고 있을 때의 운동 마찰력은 운동 마찰계수 μk와 수직항력 N의 곱입니다.",
+              extra: "지속적인 미끄러짐 분석"
+            },
+            {
+              title: "경사면 마찰 조건",
+              tag: "마찰",
+              equation: "tan θ = μs",
+              desc:
+                "경사각 θ에서 물체가 막 미끄러지기 시작할 때, 경사각의 탄젠트는 정지 마찰계수 μs와 같습니다.",
+              extra: "마찰계수 실험, 설계"
+            }
+          ]
+        },
+
+        solid: {
+          title: "고체역학 / 재료역학 (Solid Mechanics)",
+          desc:
+            "재료에 작용하는 하중에 따른 응력, 변형, 변위를 다루는 과목입니다.",
+          formulas: [
+            {
+              title: "축 방향 정상응력",
+              tag: "기본 응력",
+              equation: "σ = P / A",
+              desc:
+                "축 방향 하중 P가 단면적 A에 작용할 때 평균 정상응력 σ는 하중을 면적으로 나눈 값입니다.",
+              extra: "인장, 압축 부재 설계"
+            },
+            {
+              title: "전단응력",
+              tag: "기본 응력",
+              equation: "τ = V / A",
+              desc:
+                "단면에서 전단력 V가 작용할 때 평균 전단응력 τ는 V를 전단이 일어나는 면적 A로 나눈 값입니다.",
+              extra: "리벳, 접착, 핀 설계"
+            },
+            {
+              title: "변형률 정의",
+              tag: "기본 변형",
+              equation: "ε = δL / L₀",
+              desc:
+                "처음 길이 L₀에서 δL 만큼 길이 변화가 있을 때, 변형률 ε는 길이 변화 비율로 정의됩니다.",
+              extra: "인장 시험, 재료 특성"
+            },
+            {
+              title: "훅의 법칙 (1축)",
+              tag: "탄성",
+              equation: "σ = E · ε",
+              desc:
+                "선형 탄성 영역에서 응력 σ와 변형률 ε는 탄성계수 E에 의해 비례 관계를 이룹니다.",
+              extra: "선형 탄성 재료 가정"
+            },
+            {
+              title: "전단 변형률",
+              tag: "탄성",
+              equation: "τ = G · γ",
+              desc:
+                "전단응력 τ와 전단변형률 γ는 전단 탄성계수 G에 의해 비례합니다.",
+              extra: "비틀림, 전단 변형"
+            },
+            {
+              title: "포아송 비",
+              tag: "재료 상수",
+              equation: "ν = - (ε가로 / ε세로)",
+              desc:
+                "인장 시 세로 방향 변형률과 가로 방향 변형률의 비율로, 재료의 가로 수축 정도를 나타냅니다.",
+              extra: "0 ~ 0.5 범위, 금속 ≈ 0.3"
+            },
+            {
+              title: "탄성계수 관계",
+              tag: "재료 상수",
+              equation: "E = 2G(1 + ν),   E = 3K(1 - 2ν)",
+              desc:
+                "탄성계수 E, 전단계수 G, 체적탄성계수 K, 포아송비 ν 사이의 관계를 나타냅니다.",
+              extra: "재료 상수 상호 변환"
+            },
+            {
+              title: "축력에 의한 변형",
+              tag: "변형",
+              equation: "δ = P L / (A E)",
+              desc:
+                "균일 단면, 균일 재료인 막대에 축력 P가 작용할 때, 길이 변화 δ를 구하는 식입니다.",
+              extra: "기둥, 볼트 신장량 계산"
+            },
+            {
+              title: "단면 2차 모멘트 (직사각형)",
+              tag: "단면 특성",
+              equation: "Ix = b h³ / 12,   Iy = h b³ / 12",
+              desc:
+                "폭 b, 높이 h인 직사각형 단면의 중립축 기준 2차 모멘트를 나타냅니다.",
+              extra: "빔 휨 강성, 처짐 계산"
+            },
+            {
+              title: "극단면 2차 모멘트 (원축)",
+              tag: "비틀림",
+              equation: "J = π r⁴ / 2",
+              desc:
+                "반지름 r인 원형 축의 극단면 2차 모멘트로, 비틀림 강성을 나타내는 주요 값입니다.",
+              extra: "원형 샤프트 비틀림"
+            },
+            {
+              title: "비틀림 전단응력",
+              tag: "비틀림",
+              equation: "τ = T r / J",
+              desc:
+                "원축에 비틀림 모멘트 T가 작용할 때, 반지름 r 위치의 전단응력 τ를 구하는 식입니다.",
+              extra: "축 설계, 비틀림 파손 검토"
+            },
+            {
+              title: "비틀림 각",
+              tag: "비틀림",
+              equation: "φ = T L / (G J)",
+              desc:
+                "축 길이 L, 비틀림 모멘트 T, 전단계수 G, 극단면 2차 모멘트 J일 때 비틀림 회전각 φ입니다.",
+              extra: "변형량, 허용 비틀림 각도"
+            },
+            {
+              title: "휨 응력 (단면 내)",
+              tag: "휨",
+              equation: "σ = M y / I",
+              desc:
+                "중립축에서 거리 y 떨어진 점에서의 휨 응력은 휨모멘트 M, 단면 2차 모멘트 I에 비례합니다.",
+              extra: "빔 상단 압축, 하단 인장"
+            },
+            {
+              title: "전단응력 분포 (빔)",
+              tag: "전단",
+              equation: "τ = V Q / (I b)",
+              desc:
+                "빔 단면에서 전단력 V에 의한 전단응력 분포를 구하는 식으로, Q는 특정 영역의 1차 모멘트입니다.",
+              extra: "웹 전단응력, I형빔 분석"
+            },
+            {
+              title: "평면 응력 상태의 주응력",
+              tag: "Mohr",
+              equation:
+                "σ₁,₂ = (σx + σy)/2 ± √[((σx - σy)/2)² + τxy²]",
+              desc:
+                "평면 응력 상태에서 최대·최소 정상응력(주응력)을 구하는 식입니다.",
+              extra: "파손 이론, 안전율 계산"
+            },
+            {
+              title: "오일러 좌굴 하중",
+              tag: "좌굴",
+              equation: "Pcr = π² E I / (K L)²",
+              desc:
+                "길이 L, 탄성계수 E, 단면 2차 모멘트 I, 유효길이 계수 K를 갖는 기둥의 임계 좌굴하중입니다.",
+              extra: "기둥 설계, 장주 좌굴"
+            }
+          ]
+        },
+
+        thermo: {
+          title: "열역학 (Thermodynamics)",
+          desc:
+            "에너지, 열, 일, 상태량 변화와 열기관, 냉동기 등을 다루는 과목입니다.",
+          formulas: [
+            {
+              title: "이상기체 상태방정식",
+              tag: "기본",
+              equation: "P v = R T   또는   P V = m R T",
+              desc:
+                "압력 P, 비체적 v, 온도 T, 기체상수 R 사이의 관계를 나타내는 이상기체 모델입니다.",
+              extra: "공기, 이상기체 근사"
+            },
+            {
+              title: "내부에너지·엔탈피 변화 (이상기체)",
+              tag: "에너지",
+              equation: "Δu = cv ΔT,   Δh = cp ΔT",
+              desc:
+                "이상기체에서 내부에너지와 엔탈피 변화는 온도 변화에만 의존합니다.",
+              extra: "단열/등온 과정 해석"
+            },
+            {
+              title: "비열 관계",
+              tag: "비열",
+              equation: "cp - cv = R,   k = cp / cv",
+              desc:
+                "기체의 정압·정적 비열과 기체상수 R, 비열비 k 사이의 관계입니다.",
+              extra: "단열 지수, 압축·팽창 과정"
+            },
+            {
+              title: "열역학 제1법칙 (닫힌계)",
+              tag: "제1법칙",
+              equation: "ΔU = Q - W",
+              desc:
+                "계의 내부에너지 변화 ΔU는 들어온 열 Q에서 계가 한 일 W를 뺀 값입니다.",
+              extra: "부호 규약: Q in +, W out +"
+            },
+            {
+              title: "정상흐름 에너지 방정식",
+              tag: "흐름",
+              equation:
+                "q - w = Δh + Δ(V²/2) + Δ(g z)   (단위 질량 기준)",
+              desc:
+                "유체가 흐르는 시스템에서 단위 질량당 열·일과 엔탈피·속도·위치 에너지의 변화를 연결합니다.",
+              extra: "터빈, 압축기, 노즐 해석"
+            },
+            {
+              title: "일의 일반 표현",
+              tag: "과정",
+              equation: "W = ∫ P dV",
+              desc:
+                "준정역학적 팽창·압축 과정에서 일은 압력과 체적 변화의 적분으로 나타납니다.",
+              extra: "피스톤-실린더 시스템"
+            },
+            {
+              title: "등압 과정의 일",
+              tag: "과정",
+              equation: "W = P (V₂ - V₁)",
+              desc:
+                "압력이 일정할 때 체적 변화에 비례하여 기체가 하는 일을 계산합니다.",
+              extra: "보일러, 가열 탱크"
+            },
+            {
+              title: "등온 과정의 일 (이상기체)",
+              tag: "과정",
+              equation: "W = P₁ V₁ ln(V₂ / V₁)",
+              desc:
+                "온도가 일정한 이상기체 팽창·압축에서 수행되는 일입니다.",
+              extra: "등온 압축, 냉각 과정"
+            },
+            {
+              title: "다변수(폴리트롭) 과정의 일",
+              tag: "과정",
+              equation: "W = (P₂ V₂ - P₁ V₁) / (1 - n),   (n ≠ 1)",
+              desc:
+                "PVⁿ = 상수인 다변수 과정에서 일 W를 계산하는 식입니다.",
+              extra: "압축기, 실제 압축 근사"
+            },
+            {
+              title: "엔트로피 정의",
+              tag: "엔트로피",
+              equation: "dS = δQrev / T",
+              desc:
+                "가역 과정에서 열전달 δQrev와 온도 T의 비를 적분한 값으로 엔트로피를 정의합니다.",
+              extra: "무질서도, 자발성 판단"
+            },
+            {
+              title: "이상기체 엔트로피 변화 (형식 1)",
+              tag: "엔트로피",
+              equation:
+                "Δs = cv ln(T₂ / T₁) + R ln(v₂ / v₁)",
+              desc:
+                "온도와 비체적 변화로 이상기체의 엔트로피 변화를 계산할 수 있습니다.",
+              extra: "폐쇄계 기체 과정 분석"
+            },
+            {
+              title: "이상기체 엔트로피 변화 (형식 2)",
+              tag: "엔트로피",
+              equation:
+                "Δs = cp ln(T₂ / T₁) - R ln(P₂ / P₁)",
+              desc:
+                "온도와 압력 변화로 이상기체의 엔트로피 변화를 계산할 수 있는 또 다른 표현입니다.",
+              extra: "단열, 등엔트로피 여부 판단"
+            },
+            {
+              title: "열기관 효율",
+              tag: "열기관",
+              equation: "ηth = Wnet / Qin = 1 - Qout / Qin",
+              desc:
+                "열기관의 효율은 순수행일과 유입 열량의 비, 또는 배출 열량 비율로 표현됩니다.",
+              extra: "내연기관, 가스터빈 효율"
+            },
+            {
+              title: "카르노 기관 효율",
+              tag: "열기관",
+              equation: "ηCarnot = 1 - TL / TH",
+              desc:
+                "두 열저장소 온도 TH, TL 사이에서 작동하는 이상적인 카르노 열기관의 최대 이론 효율입니다.",
+              extra: "최고 이론 효율 기준"
+            },
+            {
+              title: "냉동기 COP",
+              tag: "냉동기",
+              equation: "COPR = QL / Wnet",
+              desc:
+                "냉동기의 성능계수는 저온부에서 빼낸 열량 QL을 소비 일 Wnet으로 나눈 값입니다.",
+              extra: "에어컨, 냉장고 성능"
+            },
+            {
+              title: "히트펌프 COP",
+              tag: "히트펌프",
+              equation: "COPHP = QH / Wnet",
+              desc:
+                "히트펌프는 고온부에 전달한 열량 QH와 소비 일 Wnet의 비로 성능을 나타냅니다.",
+              extra: "난방용 히트펌프 시스템"
+            },
+            {
+              title: "전도 열전달 (1D 평판)",
+              tag: "열전달",
+              equation: "q = k A ΔT / L",
+              desc:
+                "평판 두께 L, 온도차 ΔT, 전도율 k일 때 전도에 의한 열전달률 q를 나타냅니다.",
+              extra: "벽체, 단열재 설계"
+            },
+            {
+              title: "대류 열전달 (뉴턴 냉각법칙)",
+              tag: "열전달",
+              equation: "q = h A (Ts - T∞)",
+              desc:
+                "표면 온도 Ts와 주변 유체 온도 T∞ 사이의 온도차와 대류계수 h에 비례하여 열이 전달됩니다.",
+              extra: "핀, 열교환기 해석"
+            },
+            {
+              title: "복사 열전달 (스테판-볼츠만 법칙)",
+              tag: "열전달",
+              equation: "q = ε σ A (Ts⁴ - Tsur⁴)",
+              desc:
+                "표면 방사율 ε, 스테판-볼츠만 상수 σ, 네제곱 온도 차로 복사 열전달률을 계산합니다.",
+              extra: "고온 열전달, 단열재"
+            }
+          ]
+        },
+
+        fluid: {
+          title: "유체역학 (Fluid Mechanics)",
+          desc:
+            "유체의 정지 및 운동 상태에서의 압력, 속도, 유량, 손실 등을 다루는 과목입니다.",
+          formulas: [
+            {
+              title: "밀도와 비중량",
+              tag: "기본 물성",
+              equation: "ρ = m / V,   γ = ρ g",
+              desc:
+                "밀도 ρ는 단위 부피당 질량, 비중량 γ는 단위 부피당 무게를 의미합니다.",
+              extra: "물, 공기, 기름 물성"
+            },
+            {
+              title: "동점도",
+              tag: "점도",
+              equation: "ν = μ / ρ",
+              desc:
+                "동점도 ν는 점성계수 μ를 밀도 ρ로 나눈 값으로, 유체의 흐르기 쉬운 정도를 나타냅니다.",
+              extra: "Reynolds 수 계산에 필수"
+            },
+            {
+              title: "압력 정의",
+              tag: "압력",
+              equation: "p = F / A",
+              desc:
+                "단위 면적 A에 수직으로 작용하는 힘 F에 의해 생기는 물리량이 압력 p입니다.",
+              extra: "Pa, kPa, bar 단위"
+            },
+            {
+              title: "정수압 분포",
+              tag: "정수압",
+              equation: "p = psurf + ρ g h",
+              desc:
+                "정지한 유체에서 깊이 h 아래의 압력은 표면 압력과 ρ g h 만큼 더해진 값입니다.",
+              extra: "댐, 수조, 잠수체 설계"
+            },
+            {
+              title: "잠긴 평판에 작용하는 힘",
+              tag: "정수압",
+              equation: "F = ρ g A h̄",
+              desc:
+                "균일한 외기압 조건에서 잠긴 평판에 작용하는 총 정수압 힘 F는 면적 A와 도심 깊이 h̄에 비례합니다.",
+              extra: "수문, 수조 벽 설계"
+            },
+            {
+              title: "연속 방정식 (비압축성)",
+              tag: "연속",
+              equation: "A₁ V₁ = A₂ V₂",
+              desc:
+                "비압축성 유체 흐름에서 단면적과 평균 속도의 곱은 모든 단면에서 일정합니다.",
+              extra: "노즐, 벤투리미터 해석"
+            },
+            {
+              title: "연속 방정식 (일반형)",
+              tag: "연속",
+              equation: "ρ₁ A₁ V₁ = ρ₂ A₂ V₂",
+              desc:
+                "밀도 변화가 있는 압축성 유체의 경우 질량 유량 보존을 위해 밀도까지 포함합니다.",
+              extra: "가스, 고속 유동"
+            },
+            {
+              title: "베르누이 방정식",
+              tag: "에너지",
+              equation:
+                "p/γ + V²/(2g) + z = 상수   (손실·펌프 없음)",
+              desc:
+                "이상유체, 정상 흐름, 점성 손실이 없을 때 에너지 보존을 나타내는 식입니다.",
+              extra: "수평 관, 노즐, 오리피스"
+            },
+            {
+              title: "에너지 방정식 (손실 포함)",
+              tag: "에너지",
+              equation:
+                "p₁/γ + V₁²/(2g) + z₁ + hp = p₂/γ + V₂²/(2g) + z₂ + hL",
+              desc:
+                "펌프 헤드 hp와 손실 헤드 hL을 포함한 일반적인 1차원 에너지 방정식입니다.",
+              extra: "배관망, 펌프 시스템 설계"
+            },
+            {
+              title: "레이놀즈 수",
+              tag: "무차원 수",
+              equation: "Re = ρ V D / μ = V D / ν",
+              desc:
+                "관 직경 D, 평균속도 V일 때, 관내 흐름의 난류/층류 여부를 판별하는 무차원 수입니다.",
+              extra: "Re < 2300: 층류, Re > 4000: 난류"
+            },
+            {
+              title: "Darcy–Weisbach 손실",
+              tag: "마찰 손실",
+              equation: "hL = f (L/D) (V² / (2g))",
+              desc:
+                "관 길이 L, 직경 D, 마찰계수 f인 직관에서 마찰에 의한 에너지 손실을 계산합니다.",
+              extra: "배관 설계, 펌프선정"
+            },
+            {
+              title: "층류 마찰계수 (원관)",
+              tag: "층류",
+              equation: "f = 64 / Re   (Re < 2300)",
+              desc:
+                "완전 발달 층류 흐름에서 원형 관의 Darcy 마찰계수는 Reynolds 수의 역수에 비례합니다.",
+              extra: "Hagen–Poiseuille 식과 연계"
+            },
+            {
+              title: "Hagen–Poiseuille 식 (층류 압력강하)",
+              tag: "층류",
+              equation: "Δp = 32 μ V L / D²",
+              desc:
+                "층류, 완전 발달, 원형 관 내 흐름의 압력강하를 계산할 수 있는 식입니다.",
+              extra: "미세유체칩, 점성유 유동"
+            },
+            {
+              title: "층류 속도 분포 (원관)",
+              tag: "속도 분포",
+              equation: "u(r) = umax (1 - (r/R)²),   ū = umax / 2",
+              desc:
+                "층류 원관 흐름에서 속도 분포는 포물선 형태이며, 평균 속도는 최대 속도의 절반입니다.",
+              extra: "단면 속도분포, 유량 계산"
+            },
+            {
+              title: "항력",
+              tag: "공력",
+              equation: "FD = (1/2) ρ V² CD A",
+              desc:
+                "유체 속도 V, 밀도 ρ, 항력계수 CD, 기준면적 A에 의해 물체에 작용하는 항력을 계산합니다.",
+              extra: "자동차, 항공기, 공기저항"
+            },
+            {
+              title: "양력",
+              tag: "공력",
+              equation: "FL = (1/2) ρ V² CL A",
+              desc:
+                "양력계수 CL을 사용해 날개나 에어포일에 작용하는 양력을 계산하는 식입니다.",
+              extra: "비행기 날개, 스포일러 설계"
+            }
+          ]
+        }
+      };
+
+      // DOM 요소 참조
+      const formulaListEl = document.getElementById("formula-list");
+      const subjectTitleEl = document.getElementById("subject-title");
+      const subjectDescEl = document.getElementById("subject-desc");
+      const subjectTabEls = document.querySelectorAll(".subject-tab");
+
+      // 과목 렌더링 함수
+      function renderSubject(subjectKey) {
+        const subject = subjects[subjectKey];
+        if (!subject) return;
+
+        // 제목 / 설명 업데이트
+        subjectTitleEl.textContent = subject.title;
+        subjectDescEl.textContent = subject.desc;
+
+        // 공식 카드 초기화
+        formulaListEl.innerHTML = "";
+
+        subject.formulas.forEach((f, index) => {
+          const card = document.createElement("div");
+          card.className = "formula-card";
+
+          card.innerHTML = `
+            <div class="formula-header">
+              <div class="formula-title">${index + 1}. ${f.title}</div>
+              <div class="formula-tag">${f.tag}</div>
+            </div>
+            <div class="formula-equation">${f.equation}</div>
+            <div class="formula-desc">${f.desc}</div>
+            ${
+              f.extra
+                ? `<div class="formula-extra">📌 키워드/메모: ${f.extra}</div>`
+                : ""
+            }
+          `;
+
+          formulaListEl.appendChild(card);
+        });
+      }
+
+      // 탭 클릭 이벤트 설정
+      subjectTabEls.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const key = btn.getAttribute("data-subject");
+
+          // active 클래스 변경
+          subjectTabEls.forEach((b) => b.classList.remove("active"));
+          btn.classList.add("active");
+
+          // 과목 렌더링
+          renderSubject(key);
+        });
+      });
+
+      // 초기 화면: 정역학
+      renderSubject("statics");
+    </script>
+  </body>
+</html>
